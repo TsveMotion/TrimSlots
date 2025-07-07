@@ -1,0 +1,204 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Role enum for user types
+enum Role {
+  ADMIN
+  BUSINESS_OWNER
+  WORKER
+  CLIENT
+}
+
+// User model with role-based access
+model User {
+  id             String    @id @default(uuid())
+  name           String?
+  email          String    @unique
+  emailVerified  DateTime?
+  image          String?
+  hashedPassword String?
+  role           Role      @default(CLIENT)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // Business relationships
+  businessId       String?
+  business         Business?        @relation("BusinessMembers", fields: [businessId], references: [id], onDelete: SetNull)
+  managedBusiness  Business?        @relation("BusinessOwner")
+  clientBusinesses BusinessClient[]
+
+  // Payment relationships
+  payments Payment[]
+
+  // Auth related
+  accounts Account[]
+  sessions Session[]
+}
+
+// Account model for OAuth providers
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+// Session model for authentication
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Business model
+model Business {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  address     String?
+  phone       String?
+  email       String?
+  website     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  ownerId      String            @unique
+  owner        User              @relation("BusinessOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members      User[]            @relation("BusinessMembers")
+  clients      BusinessClient[]
+  services     Service[]
+  bookings     Booking[]
+  bankAccounts BankAccount[]
+  settings     BusinessSettings?
+  payments     Payment[]
+}
+
+// BusinessClient model (many-to-many relationship)
+model BusinessClient {
+  id         String   @id @default(uuid())
+  businessId String
+  clientId   String
+  createdAt  DateTime @default(now())
+
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  client   User     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@unique([businessId, clientId])
+}
+
+// Service model
+model Service {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  duration    Int // in minutes
+  price       Float
+  businessId  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  business Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  bookings Booking[]
+  payments Payment[]
+}
+
+// Booking model
+model Booking {
+  id         String   @id @default(uuid())
+  startTime  DateTime
+  endTime    DateTime
+  status     String   @default("pending") // pending, confirmed, cancelled, completed
+  notes      String?
+  businessId String
+  serviceId  String
+  clientId   String
+  workerId   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  service  Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+}
+
+// BankAccount model
+model BankAccount {
+  id                String   @id @default(uuid())
+  accountHolderName String
+  accountNumber     String
+  sortCode          String
+  isDefault         Boolean  @default(false)
+  businessId        String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  business Business @relation(fields: [businessId], references: [id])
+}
+
+// BusinessSettings model
+model BusinessSettings {
+  id              String   @id @default(uuid())
+  businessId      String   @unique
+  stripeConnectId String?
+  payoutsEnabled  Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  business Business @relation(fields: [businessId], references: [id])
+}
+
+// Payment model
+model Payment {
+  id                 String   @id @default(uuid())
+  amount             Float    // Total payment amount
+  platformFeeAmount  Float    // 2% platform fee
+  stripeFeeAmount    Float    // Stripe's fee
+  businessAmount     Float    // Net amount to business after fees
+  status             String   @default("pending") // pending, completed, failed
+  stripePaymentId    String?  // Stripe payment intent ID
+  businessId         String
+  serviceId          String?
+  bookingId          String?
+  clientId           String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  service  Service? @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  client   User?    @relation(fields: [clientId], references: [id], onDelete: SetNull)
+}
+
+// Contact form submissions
+model Contact {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  status    String   @default("unread") // unread, read, responded
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

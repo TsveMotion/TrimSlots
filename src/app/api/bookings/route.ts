@@ -279,12 +279,17 @@ export async function POST(req: NextRequest) {
     bookingEndTime.setMinutes(bookingEndTime.getMinutes() + service.duration);
     
     // Create the booking
+    // Ensure businessId is a string before using it
+    if (!businessId) {
+      return NextResponse.json({ message: "Business ID is required" }, { status: 400 });
+    }
+    
     const booking = await prisma.booking.create({
       data: {
         startTime: bookingStartTime,
         endTime: bookingEndTime,
         status: status || "CONFIRMED",
-        businessId,
+        businessId: businessId, // Explicitly use the string value
         clientId,
         workerId,
         serviceId,

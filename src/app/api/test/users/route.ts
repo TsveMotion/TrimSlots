@@ -50,8 +50,10 @@ export async function GET() {
         },
         _count: {
           select: {
-            bookingsAsClient: true,
-            bookingsAsWorker: true
+            // Using valid count properties from the schema
+            accounts: true,
+            sessions: true,
+            clientBusinesses: true
           }
         }
       },

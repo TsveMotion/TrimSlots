@@ -9,12 +9,12 @@ export async function GET() {
     // Get the session
     const session = await getServerSession(authOptions);
 
-    console.log('Fetching business stats for user:', session.user.id);
-
     // Check if the user is authenticated
     if (!session || !session.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    
+    console.log('Fetching business stats for user:', session.user.id);
 
     // Check if the user has the appropriate role
     const userRole = session.user.role;

@@ -20,10 +20,21 @@ export async function GET(request: NextRequest) {
     // Get business ID from the session user
     const userId = session.user.id;
     
-    // Find business settings for this user
+    // Find business for this user first
+    const business = await prisma.business.findUnique({
+      where: {
+        ownerId: userId,
+      },
+    });
+    
+    if (!business) {
+      return NextResponse.json({ message: 'Business not found' }, { status: 404 });
+    }
+    
+    // Find business settings using businessId
     const businessSettings = await prisma.businessSettings.findFirst({
       where: {
-        userId: userId,
+        businessId: business.id,
       },
     });
     
@@ -74,16 +85,23 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    // Find business for this user first
+    const business = await prisma.business.findUnique({
+      where: {
+        ownerId: userId,
+      },
+    });
+    
+    if (!business) {
+      return NextResponse.json({ message: 'Business not found' }, { status: 404 });
+    }
+    
     // Create new business settings
     const businessSettings = await prisma.businessSettings.create({
       data: {
-        userId: userId,
-        name: data.name,
-        address: data.address || null,
-        phone: data.phone || null,
-        email: data.email || null,
-        description: data.description || null,
-        openingHours: data.openingHours || null,
+        businessId: business.id,
+        stripeConnectId: data.stripeConnectId || null,
+        payoutsEnabled: data.payoutsEnabled || false,
       },
     });
     
@@ -121,10 +139,21 @@ export async function PUT(request: NextRequest) {
       );
     }
     
+    // Find business for this user first
+    const business = await prisma.business.findUnique({
+      where: {
+        ownerId: userId,
+      },
+    });
+    
+    if (!business) {
+      return NextResponse.json({ message: 'Business not found' }, { status: 404 });
+    }
+    
     // Find existing business settings
     const existingSettings = await prisma.businessSettings.findFirst({
       where: {
-        userId: userId,
+        businessId: business.id,
       },
     });
     
@@ -132,13 +161,9 @@ export async function PUT(request: NextRequest) {
       // Create new settings if none exist
       const businessSettings = await prisma.businessSettings.create({
         data: {
-          userId: userId,
-          name: data.name,
-          address: data.address || null,
-          phone: data.phone || null,
-          email: data.email || null,
-          description: data.description || null,
-          openingHours: data.openingHours || null,
+          businessId: business.id,
+          stripeConnectId: data.stripeConnectId || null,
+          payoutsEnabled: data.payoutsEnabled || false,
         },
       });
       
@@ -151,12 +176,8 @@ export async function PUT(request: NextRequest) {
         id: existingSettings.id,
       },
       data: {
-        name: data.name,
-        address: data.address || null,
-        phone: data.phone || null,
-        email: data.email || null,
-        description: data.description || null,
-        openingHours: data.openingHours || null,
+        stripeConnectId: data.stripeConnectId || existingSettings.stripeConnectId,
+        payoutsEnabled: data.payoutsEnabled !== undefined ? data.payoutsEnabled : existingSettings.payoutsEnabled,
       },
     });
     

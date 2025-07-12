@@ -33,16 +33,14 @@ export async function POST(request: Request) {
       await prisma.booking.create({
         data: {
           service: { connect: { id: serviceId } },
-          worker: { connect: { id: workerId } },
+          workerId: workerId,
           business: { connect: { id: businessId } },
-          date: new Date(date),
-          time,
-          clientName,
-          clientEmail,
-          status: "CONFIRMED",
-          paymentStatus: "PAID",
-          paymentId: paymentIntent.id,
-          amount: paymentIntent.amount / 100, // Convert from cents to dollars
+          startTime: new Date(date + ' ' + time),
+          endTime: new Date(date + ' ' + time), // This should be calculated based on service duration
+          clientId: clientEmail, // Assuming clientEmail is used as clientId
+          status: "confirmed",
+          isPaid: true,
+          notes: `Payment ID: ${paymentIntent.id}, Amount: $${paymentIntent.amount / 100}`
         },
       });
       

@@ -137,6 +137,7 @@ model Booking {
   serviceId  String
   clientId   String
   workerId   String?
+  isPaid     Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 

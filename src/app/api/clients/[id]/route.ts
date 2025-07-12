@@ -207,12 +207,17 @@ export async function DELETE(
       },
       include: {
         clientBusinesses: true,
-        bookings: {
-          select: {
-            id: true,
-          },
-        },
       },
+    });
+    
+    // Check for bookings separately
+    const bookings = await prisma.booking.findMany({
+      where: {
+        clientId: id
+      },
+      select: {
+        id: true
+      }
     });
     
     if (!existingClient) {
@@ -236,7 +241,12 @@ export async function DELETE(
         return NextResponse.json({ message: "Business not found" }, { status: 404 });
       }
       
-      const clientBusiness = existingClient.clientBusinesses.find(cb => cb.businessId === business.id);
+      // Check if the client is associated with this business
+      if (!existingClient.clientBusinesses || existingClient.clientBusinesses.length === 0) {
+        return NextResponse.json({ message: "Client not associated with any business" }, { status: 403 });
+      }
+      
+      const clientBusiness = existingClient.clientBusinesses.find((cb: any) => cb.businessId === business.id);
       
       if (!clientBusiness) {
         return NextResponse.json({ message: "Forbidden" }, { status: 403 });
@@ -252,7 +262,12 @@ export async function DELETE(
         return NextResponse.json({ message: "Business ID is required for admin" }, { status: 400 });
       }
       
-      const clientBusiness = existingClient.clientBusinesses.find(cb => cb.businessId === businessId);
+      // Check if the client is associated with this business
+      if (!existingClient.clientBusinesses || existingClient.clientBusinesses.length === 0) {
+        return NextResponse.json({ message: "Client not associated with any business" }, { status: 403 });
+      }
+      
+      const clientBusiness = existingClient.clientBusinesses.find((cb: any) => cb.businessId === businessId);
       
       if (!clientBusiness) {
         return NextResponse.json({ message: "Client is not associated with this business" }, { status: 400 });
@@ -260,7 +275,7 @@ export async function DELETE(
     }
     
     // Check if client has bookings with this business
-    const hasBookings = existingClient.bookings.length > 0;
+    const hasBookings = bookings.length > 0;
     
     if (hasBookings) {
       return NextResponse.json({ 
@@ -269,10 +284,10 @@ export async function DELETE(
     }
     
     // Remove client from business (don't delete the user account)
-    await prisma.clientBusiness.delete({
+    await prisma.businessClient.delete({
       where: {
-        userId_businessId: {
-          userId: id,
+        businessId_clientId: {
+          clientId: id,
           businessId: businessId!,
         },
       },

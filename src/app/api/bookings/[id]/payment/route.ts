@@ -58,51 +58,33 @@ export async function PUT(
     }
     
     // Update the booking payment status
+    // Instead of using isPaid directly, we'll update the status field
     const updatedBooking = await prisma.booking.update({
       where: {
         id,
       },
       data: {
-        isPaid,
+        status: isPaid ? 'paid' : 'pending',
       },
+      // Include related data with proper typing
       include: {
-        client: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        worker: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        service: {
-          select: {
-            id: true,
-            name: true,
-            price: true,
-          },
-        },
+        business: true,
       },
     });
     
-    // Format the response
+    // Format the response with only available fields
     const formattedBooking = {
       id: updatedBooking.id,
-      date: updatedBooking.date.toISOString(),
-      startTime: updatedBooking.startTime,
-      endTime: updatedBooking.endTime,
+      startTime: updatedBooking.startTime.toISOString(),
+      endTime: updatedBooking.endTime.toISOString(),
       status: updatedBooking.status,
       clientId: updatedBooking.clientId,
-      clientName: updatedBooking.client.name,
       workerId: updatedBooking.workerId,
-      workerName: updatedBooking.worker.name,
       serviceId: updatedBooking.serviceId,
-      serviceName: updatedBooking.service.name,
-      price: updatedBooking.service.price,
-      isPaid: updatedBooking.isPaid,
+      businessId: updatedBooking.businessId,
+      businessName: updatedBooking.business.name,
+      // isPaid is now represented by the status field
+      isPaid: updatedBooking.status === 'paid',
     };
     
     return NextResponse.json(formattedBooking);

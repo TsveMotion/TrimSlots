@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { Role } from "@prisma/client";
 import { PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import StripeProvider from "@/components/StripeProvider";
 
@@ -18,6 +19,19 @@ interface Business {
   logo: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+interface BusinessSettings {
+  id: string;
+  businessId: string;
+  profileBgColor: string | null;
+  profileTextColor: string | null;
+  profileAccentColor: string | null;
+  profileHeaderBgImage: string | null;
+  profileBgImage: string | null;
+  profileCustomCss: string | null;
+  profileFontFamily: string | null;
+  profileTheme?: string | null; // Added theme property
 }
 
 interface Service {
@@ -53,6 +67,11 @@ export default function BarberPage() {
   const [bookingStep, setBookingStep] = useState(1);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   
+  // Business settings for customization
+  const [businessSettings, setBusinessSettings] = useState<BusinessSettings | null>(null);
+  const [customStyles, setCustomStyles] = useState<React.CSSProperties>({});
+  const [customCss, setCustomCss] = useState<string>("");
+  
   // Steps for the progress bar
   const steps = [
     { id: 1, name: 'Service' },
@@ -63,6 +82,44 @@ export default function BarberPage() {
     { id: 6, name: 'Payment' },
   ];
 
+  // Function to apply business settings to the page
+  const applyBusinessSettings = (settings: BusinessSettings | null) => {
+    if (!settings) return;
+    
+    const styles: React.CSSProperties = {};
+    
+    // Apply background color
+    if (settings.profileBgColor) {
+      styles.backgroundColor = settings.profileBgColor;
+    }
+    
+    // Apply text color
+    if (settings.profileTextColor) {
+      styles.color = settings.profileTextColor;
+    }
+    
+    // Apply font family
+    if (settings.profileFontFamily) {
+      styles.fontFamily = settings.profileFontFamily;
+    }
+    
+    // Apply background image if available
+    if (settings.profileBgImage) {
+      styles.backgroundImage = `url(${settings.profileBgImage})`;
+      styles.backgroundSize = 'cover';
+      styles.backgroundPosition = 'center';
+      styles.backgroundAttachment = 'fixed';
+    }
+    
+    // Set the custom styles
+    setCustomStyles(styles);
+    
+    // Set custom CSS if available
+    if (settings.profileCustomCss) {
+      setCustomCss(settings.profileCustomCss);
+    }
+  };
+
   useEffect(() => {
     const fetchBusinessData = async () => {
       try {
@@ -70,32 +127,56 @@ export default function BarberPage() {
         setError("");
 
         // Fetch business details
+        console.log(`Fetching business details for ID: ${id}`);
         const businessRes = await fetch(`/api/public/businesses/${id}`);
         if (!businessRes.ok) {
-          throw new Error("Failed to load business details");
+          console.error(`Failed to fetch business with ID: ${id}, status: ${businessRes.status}`);
+          if (businessRes.status === 404) {
+            throw new Error("Business not found. The ID may be incorrect or the business no longer exists.");
+          } else {
+            throw new Error("Failed to load business details");
+          }
         }
         const businessData = await businessRes.json();
         setBusiness(businessData);
+        console.log("Business data loaded:", businessData);
 
         // Fetch services
         const servicesRes = await fetch(`/api/public/businesses/${id}/services`);
         if (!servicesRes.ok) {
-          throw new Error("Failed to load services");
+          console.warn(`Failed to fetch services for business ID: ${id}, status: ${servicesRes.status}`);
+          // Don't throw error here, just log warning and continue
+        } else {
+          const servicesData = await servicesRes.json();
+          setServices(servicesData);
+          console.log("Services loaded:", servicesData.length);
         }
-        const servicesData = await servicesRes.json();
-        setServices(servicesData);
 
         // Fetch workers
         const workersRes = await fetch(`/api/public/businesses/${id}/workers`);
         if (!workersRes.ok) {
-          throw new Error("Failed to load workers");
+          console.warn(`Failed to fetch workers for business ID: ${id}, status: ${workersRes.status}`);
+          // Don't throw error here, just log warning and continue
+        } else {
+          const workersData = await workersRes.json();
+          setWorkers(workersData);
+          console.log("Workers loaded:", workersData.length);
         }
-        const workersData = await workersRes.json();
-        setWorkers(workersData);
+        
+        // Fetch business settings for customization
+        const settingsRes = await fetch(`/api/public/businesses/${id}/settings`);
+        if (settingsRes.ok) {
+          const settingsData = await settingsRes.json();
+          console.log("Business settings loaded:", settingsData);
+          setBusinessSettings(settingsData);
+          applyBusinessSettings(settingsData);
+        } else {
+          console.error("Failed to load business settings:", settingsRes.status);
+        }
 
-      } catch (err) {
+      } catch (err: any) {
         console.error("Error fetching business data:", err);
-        setError("Failed to load business information. Please try again later.");
+        setError(err.message || "Failed to load business information. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -390,7 +471,7 @@ export default function BarberPage() {
             </div>
             <div className="flex justify-between mt-6">
               <button
-                className="text-blue-600 hover:underline flex items-center"
+                className="hover:underline flex items-center" style={{ color: businessSettings?.profileAccentColor || '#3b82f6' }}
                 onClick={() => setBookingStep(1)}
               >
                 <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -400,7 +481,7 @@ export default function BarberPage() {
               </button>
               
               <button
-                className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition flex items-center"
+                className="text-white py-2 px-6 rounded-lg hover:opacity-90 transition flex items-center" style={buttonStyle}
                 onClick={() => selectedWorker ? setBookingStep(3) : alert('Please select a barber to continue')}
               >
                 Continue
@@ -536,7 +617,7 @@ export default function BarberPage() {
             </div>
             <div className="flex justify-between mt-6">
               <button
-                className="text-blue-600 hover:underline flex items-center"
+                className="hover:underline flex items-center" style={{ color: businessSettings?.profileAccentColor || '#3b82f6' }}
                 onClick={() => setBookingStep(3)}
               >
                 <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -546,7 +627,7 @@ export default function BarberPage() {
               </button>
               
               <button
-                className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition flex items-center"
+                className="text-white py-2 px-6 rounded-lg hover:opacity-90 transition flex items-center" style={buttonStyle}
                 onClick={() => setBookingStep(5)}
               >
                 Continue
@@ -562,23 +643,23 @@ export default function BarberPage() {
           <div className="mt-8">
             <h2 className="text-2xl font-bold mb-4">Confirm Booking</h2>
             <div className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm mb-6">
-              <h3 className="font-bold text-xl mb-4 text-blue-700 flex items-center">
-                <svg className="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <h3 className="font-bold text-xl mb-4 flex items-center" style={{ color: businessSettings?.profileAccentColor || '#3b82f6' }}>
+                <svg className="w-6 h-6 mr-2" style={{ color: businessSettings?.profileAccentColor || '#3b82f6' }} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
                 Booking Summary
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-blue-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-blue-800 mb-3">Service Details</h4>
+                <div className="rounded-lg p-4" style={{ backgroundColor: businessSettings?.profileAccentColor ? `${businessSettings.profileAccentColor}10` : '#ebf5ff' }}>
+                  <h4 className="font-semibold mb-3" style={{ color: businessSettings?.profileAccentColor || '#3b82f6' }}>Service Details</h4>
                   <div className="mb-3 flex justify-between">
                     <span className="text-gray-600">Service:</span> 
                     <span className="font-medium">{selectedService?.name}</span>
                   </div>
                   <div className="mb-3 flex justify-between">
                     <span className="text-gray-600">Price:</span> 
-                    <span className="font-bold text-blue-700">${selectedService?.price.toFixed(2)}</span>
+                    <span className="font-bold" style={{ color: businessSettings?.profileAccentColor || '#3b82f6' }}>${selectedService?.price.toFixed(2)}</span>
                   </div>
                   <div className="mb-3 flex justify-between">
                     <span className="text-gray-600">Duration:</span> 
@@ -847,9 +928,31 @@ export default function BarberPage() {
     );
   }
 
+  // Add custom CSS if provided
+  const CustomCssBlock = () => {
+    if (!customCss) return null;
+    return <style dangerouslySetInnerHTML={{ __html: customCss }} />;
+  };
+  
+  // Apply accent color to buttons and links
+  const buttonStyle: React.CSSProperties = {
+    backgroundColor: businessSettings?.profileAccentColor || '#3b82f6',
+  };
+  
+  // Apply header background image if available
+  const headerStyle: React.CSSProperties = {
+    backgroundImage: businessSettings?.profileHeaderBgImage ? 
+      `url(${businessSettings.profileHeaderBgImage})` : undefined,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundColor: businessSettings?.profileBgColor || '#0f172a',
+    color: businessSettings?.profileTextColor || '#f8fafc',
+  };
+  
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
+    <div className="min-h-screen" style={customStyles}>
+      <CustomCssBlock />
+      <header className="shadow-sm" style={headerStyle}>
         <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
@@ -864,20 +967,26 @@ export default function BarberPage() {
                   {business?.name?.charAt(0) || "B"}
                 </div>
               )}
-              <h1 className="text-2xl font-bold text-gray-900">{business?.name}</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                {business?.name && business.name.includes('@') 
+                  ? business.name.split('@')[0] + "'s Business" 
+                  : business?.name}
+              </h1>
             </div>
             <div>
               {session ? (
                 <Link
                   href="/dashboard"
-                  className="text-blue-600 hover:underline"
+                  className="hover:underline"
+                  style={{ color: businessSettings?.profileAccentColor || '#3b82f6' }}
                 >
                   Dashboard
                 </Link>
               ) : (
                 <Link
                   href="/auth/signin"
-                  className="text-blue-600 hover:underline"
+                  className="hover:underline"
+                  style={{ color: businessSettings?.profileAccentColor || '#3b82f6' }}
                 >
                   Sign In
                 </Link>
@@ -922,7 +1031,7 @@ export default function BarberPage() {
                 {business?.website && (
                   <div className="mb-2">
                     <span className="font-medium">Website:</span>{" "}
-                    <a href={business.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    <a href={business.website} target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: businessSettings?.profileAccentColor || '#3b82f6' }}>
                       {business.website}
                     </a>
                   </div>
@@ -941,7 +1050,8 @@ export default function BarberPage() {
                 {steps.map((step, index) => (
                   <div key={step.id} className="relative flex flex-col items-center z-10">
                     <div 
-                      className={`w-10 h-10 rounded-full flex items-center justify-center ${bookingStep >= step.id ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'} border-2 ${bookingStep >= step.id ? 'border-blue-600' : 'border-gray-200'}`}
+                      className={`w-10 h-10 rounded-full flex items-center justify-center ${bookingStep >= step.id ? 'text-white' : 'bg-gray-200 text-gray-600'} border-2 ${bookingStep >= step.id ? '' : 'border-gray-200'}`}
+                      style={bookingStep >= step.id ? { backgroundColor: businessSettings?.profileAccentColor || '#3b82f6', borderColor: businessSettings?.profileAccentColor || '#3b82f6' } : {}}
                     >
                       {bookingStep > step.id ? (
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -951,14 +1061,17 @@ export default function BarberPage() {
                         step.id
                       )}
                     </div>
-                    <p className={`mt-2 text-xs font-medium ${bookingStep >= step.id ? 'text-blue-600' : 'text-gray-500'}`}>
+                    <p className={`mt-2 text-xs font-medium ${bookingStep >= step.id ? '' : 'text-gray-500'}`}
+                      style={bookingStep >= step.id ? { color: businessSettings?.profileAccentColor || '#3b82f6' } : {}}
+                    >
                       {step.name}
                     </p>
                     
                     {/* Colored progress line to the left of current step */}
                     {index > 0 && (
                       <div 
-                        className={`absolute top-5 w-full h-0.5 -left-full z-0 ${bookingStep > step.id - 1 ? 'bg-blue-600' : 'bg-gray-200'}`} 
+                        className={`absolute top-5 w-full h-0.5 -left-full z-0 ${bookingStep > step.id - 1 ? '' : 'bg-gray-200'}`}
+                        style={bookingStep > step.id - 1 ? { backgroundColor: businessSettings?.profileAccentColor || '#3b82f6' } : {}} 
                       />
                     )}
                   </div>
@@ -976,6 +1089,34 @@ export default function BarberPage() {
           <p className="text-center text-gray-500 text-sm">
             &copy; 2025 TrimSlots. All rights reserved.
           </p>
+          
+          {/* Style Information for Business Owners */}
+          {session?.user?.role === Role.BUSINESS_OWNER && businessSettings && (
+            <div className="mt-2 text-xs text-center">
+              <details className="inline-block">
+                <summary className="cursor-pointer hover:underline" style={{ color: businessSettings.profileAccentColor || '#3b82f6' }}>
+                  View Style Information
+                </summary>
+                <div className="bg-white border rounded-md p-3 mt-2 text-left shadow-sm">
+                  {/* Display theme information if available */}
+                  {'profileTheme' in businessSettings && businessSettings.profileTheme && (
+                    <p className="mb-2 font-medium" style={{ color: businessSettings.profileAccentColor || '#3b82f6' }}>
+                      Theme: {businessSettings.profileTheme}
+                    </p>
+                  )}
+                  <p className="mb-1"><span className="font-medium">Background:</span> {businessSettings.profileBgColor || 'Default'}</p>
+                  <p className="mb-1"><span className="font-medium">Text:</span> {businessSettings.profileTextColor || 'Default'}</p>
+                  <p className="mb-1"><span className="font-medium">Accent:</span> {businessSettings.profileAccentColor || 'Default'}</p>
+                  <p className="mb-1"><span className="font-medium">Font:</span> {businessSettings.profileFontFamily || 'Default'}</p>
+                  <p className="mt-2 text-xs">
+                    <Link href="/business/settings" className="hover:underline" style={{ color: businessSettings.profileAccentColor || '#3b82f6' }}>
+                      Edit Profile Styles
+                    </Link>
+                  </p>
+                </div>
+              </details>
+            </div>
+          )}
         </div>
       </footer>
       

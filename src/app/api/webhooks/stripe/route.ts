@@ -33,7 +33,7 @@ export async function POST(request: Request) {
       await prisma.booking.create({
         data: {
           service: { connect: { id: serviceId } },
-          workerId: workerId,
+          workerId: workerId, // Using workerId field directly as per schema
           business: { connect: { id: businessId } },
           startTime: new Date(date + ' ' + time),
           endTime: new Date(date + ' ' + time), // This should be calculated based on service duration

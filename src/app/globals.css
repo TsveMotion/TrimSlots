@@ -29,3 +29,44 @@
 .animation-delay-4000 {
   animation-delay: 4s;
 }
+
+/* Custom animations for 404 page */
+@keyframes gradient-x {
+  0%, 100% {
+    background-size: 200% 200%;
+    background-position: left center;
+  }
+  50% {
+    background-size: 200% 200%;
+    background-position: right center;
+  }
+}
+
+.animate-gradient-x {
+  animation: gradient-x 3s ease infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(-10px) rotate(-5deg);
+  }
+  50% {
+    transform: translateY(10px) rotate(5deg);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float 7s ease-in-out infinite 1s;
+}
+
+.animate-float-slow {
+  animation: float 8s ease-in-out infinite 0.5s;
+}
+
+.animate-float-fast {
+  animation: float 5s ease-in-out infinite 0.2s;
+}

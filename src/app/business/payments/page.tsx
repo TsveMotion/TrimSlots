@@ -257,19 +257,19 @@ export default function PaymentsManagement() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-blue-950 to-blue-900 text-white">
       <Navigation />
-      <div className="pt-20 pb-10">
+      <div className="pt-24 pb-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Page Header */}
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-gray-900">Payments Management</h1>
-            <p className="mt-1 text-sm text-gray-500">Manage your payment methods and view payment history</p>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-200 to-blue-400 bg-clip-text text-transparent">Payments Management</h1>
+            <p className="mt-1 text-sm text-blue-200">Manage your payment methods and view payment history</p>
           </div>
           
           {/* Success/Error Messages */}
           {error && (
-            <div className="mb-4 rounded-md bg-red-50 p-4">
+            <div className="mb-4 rounded-md bg-red-900/30 border border-red-500/50 p-4">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
@@ -277,14 +277,14 @@ export default function PaymentsManagement() {
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-red-800">{error}</p>
+                  <p className="text-sm font-medium text-red-200">{error}</p>
                 </div>
               </div>
             </div>
           )}
           
           {success && (
-            <div className="mb-4 rounded-md bg-green-50 p-4">
+            <div className="mb-4 rounded-md bg-green-900/30 border border-green-500/50 p-4">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
@@ -292,7 +292,7 @@ export default function PaymentsManagement() {
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-green-800">{success}</p>
+                  <p className="text-sm font-medium text-green-200">{success}</p>
                 </div>
               </div>
             </div>

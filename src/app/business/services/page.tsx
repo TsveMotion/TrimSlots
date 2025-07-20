@@ -221,22 +221,22 @@ export default function ServicesManagement() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-blue-950 to-blue-900 text-white">
       <Navigation />
-      <div className="pt-20 pb-10">
+      <div className="pt-24 pb-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Page header */}
           <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Services Management</h1>
-              <p className="mt-1 text-sm text-gray-500">Manage your service offerings</p>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-200 to-blue-400 bg-clip-text text-transparent">Services Management</h1>
+              <p className="mt-1 text-sm text-blue-300">Manage your service offerings</p>
             </div>
             <div className="mt-4 md:mt-0 flex space-x-3">
               {business && (
                 <Link 
                   href={`/barbers/${business.id}`} 
                   target="_blank"
-                  className="inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+                  className="inline-flex items-center rounded-md bg-blue-600/70 backdrop-blur-sm border border-blue-500/50 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500/70 transition-colors duration-200"
                 >
                   <svg className="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
@@ -250,7 +250,7 @@ export default function ServicesManagement() {
                   setFormData({ name: "", description: "", duration: 30, price: 0 });
                   setIsAddModalOpen(true);
                 }}
-                className="inline-flex items-center rounded-md bg-gray-800 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-700"
+                className="inline-flex items-center rounded-md bg-blue-800/70 backdrop-blur-sm border border-blue-700/50 px-3 py-2 text-sm font-semibold text-blue-100 shadow-sm hover:bg-blue-700/70 transition-colors duration-200"
               >
                 <svg className="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
@@ -262,7 +262,7 @@ export default function ServicesManagement() {
           
           {/* Success/Error Messages */}
           {error && (
-            <div className="mb-4 rounded-md bg-red-50 p-4">
+            <div className="mb-4 rounded-md bg-red-900/20 border border-red-500/50 backdrop-blur-sm p-4">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
@@ -270,22 +270,22 @@ export default function ServicesManagement() {
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-red-800">{error}</p>
+                  <p className="text-sm font-medium text-red-300">{error}</p>
                 </div>
               </div>
             </div>
           )}
           
           {success && (
-            <div className="mb-4 rounded-md bg-green-50 p-4">
+            <div className="mb-4 rounded-md bg-blue-900/20 border border-blue-500/50 backdrop-blur-sm p-4">
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                  <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-green-800">{success}</p>
+                  <p className="text-sm font-medium text-blue-300">{success}</p>
                 </div>
               </div>
             </div>
@@ -295,39 +295,39 @@ export default function ServicesManagement() {
           <div className="mt-8 flex flex-col">
             <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-                <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                  <table className="min-w-full divide-y divide-gray-300">
-                    <thead className="bg-gray-50">
+                <div className="overflow-hidden shadow-lg border border-blue-700/50 md:rounded-lg bg-blue-900/30 backdrop-blur-sm">
+                  <table className="min-w-full divide-y divide-blue-700/30">
+                    <thead className="bg-blue-950/50">
                       <tr>
-                        <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Service</th>
-                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Duration</th>
-                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Price</th>
-                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Description</th>
+                        <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-blue-200 sm:pl-6">Service</th>
+                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-blue-200">Duration</th>
+                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-blue-200">Price</th>
+                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-blue-200">Description</th>
                         <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
                           <span className="sr-only">Actions</span>
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200 bg-white">
+                    <tbody className="divide-y divide-blue-700/30 bg-blue-900/20">
                       {services.length > 0 ? (
                         services.map((service) => (
-                          <tr key={service.id}>
-                            <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{service.name}</td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{formatDuration(service.duration)}</td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{formatPrice(service.price)}</td>
-                            <td className="px-3 py-4 text-sm text-gray-500 max-w-xs truncate">
+                          <tr key={service.id} className="hover:bg-blue-800/30 transition-colors duration-150">
+                            <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-blue-100 sm:pl-6">{service.name}</td>
+                            <td className="whitespace-nowrap px-3 py-4 text-sm text-blue-200">{formatDuration(service.duration)}</td>
+                            <td className="whitespace-nowrap px-3 py-4 text-sm text-blue-200">{formatPrice(service.price)}</td>
+                            <td className="px-3 py-4 text-sm text-blue-200 max-w-xs truncate">
                               {service.description || "No description"}
                             </td>
                             <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                               <button
                                 onClick={() => openEditModal(service)}
-                                className="text-indigo-600 hover:text-indigo-900 mr-4"
+                                className="text-blue-300 hover:text-blue-100 transition-colors duration-150 mr-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-blue-900 rounded-md px-2 py-1"
                               >
                                 Edit
                               </button>
                               <button
                                 onClick={() => openDeleteModal(service)}
-                                className="text-red-600 hover:text-red-900"
+                                className="text-red-400 hover:text-red-300 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-blue-900 rounded-md px-2 py-1"
                               >
                                 Delete
                               </button>
@@ -336,7 +336,7 @@ export default function ServicesManagement() {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={5} className="py-4 text-center text-sm text-gray-500">
+                          <td colSpan={5} className="py-4 text-center text-sm text-blue-300">
                             No services found. Add your first service to get started.
                           </td>
                         </tr>
@@ -352,17 +352,17 @@ export default function ServicesManagement() {
           {isAddModalOpen && (
             <div className="fixed inset-0 z-10 overflow-y-auto">
               <div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={() => setIsAddModalOpen(false)}></div>
+                <div className="fixed inset-0 bg-blue-950/80 backdrop-blur-sm transition-opacity" onClick={() => setIsAddModalOpen(false)}></div>
                 <span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
-                <div className="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
-                  <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div className="inline-block transform overflow-hidden rounded-lg bg-blue-900/90 border border-blue-700/50 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle backdrop-blur-sm">
+                  <div className="bg-blue-900/90 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div className="sm:flex sm:items-start">
                       <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                        <h3 className="text-lg font-medium leading-6 text-gray-900">Add New Service</h3>
+                        <h3 className="text-lg font-medium leading-6 text-blue-100">Add New Service</h3>
                         <div className="mt-2">
                           <form onSubmit={handleAddService}>
                             <div className="mb-4">
-                              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Service Name</label>
+                              <label htmlFor="name" className="block text-sm font-medium text-blue-200">Service Name</label>
                               <input
                                 type="text"
                                 name="name"
@@ -370,22 +370,22 @@ export default function ServicesManagement() {
                                 value={formData.name}
                                 onChange={handleInputChange}
                                 required
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                className="mt-1 block w-full rounded-md border-blue-700/50 bg-blue-950/50 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm text-blue-100 placeholder-blue-300/50"
                               />
                             </div>
                             <div className="mb-4">
-                              <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
+                              <label htmlFor="description" className="block text-sm font-medium text-blue-200">Description</label>
                               <textarea
                                 name="description"
                                 id="description"
                                 value={formData.description}
                                 onChange={handleInputChange}
                                 rows={3}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                className="mt-1 block w-full rounded-md border-blue-700/50 bg-blue-950/50 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm text-blue-100 placeholder-blue-300/50"
                               />
                             </div>
                             <div className="mb-4">
-                              <label htmlFor="duration" className="block text-sm font-medium text-gray-700">Duration (minutes)</label>
+                              <label htmlFor="duration" className="block text-sm font-medium text-blue-200">Duration (minutes)</label>
                               <input
                                 type="number"
                                 name="duration"
@@ -395,11 +395,11 @@ export default function ServicesManagement() {
                                 min={5}
                                 step={5}
                                 required
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                className="mt-1 block w-full rounded-md border-blue-700/50 bg-blue-950/50 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm text-blue-100"
                               />
                             </div>
                             <div className="mb-4">
-                              <label htmlFor="price" className="block text-sm font-medium text-gray-700">Price ($)</label>
+                              <label htmlFor="price" className="block text-sm font-medium text-blue-200">Price ($)</label>
                               <input
                                 type="number"
                                 name="price"
@@ -409,20 +409,20 @@ export default function ServicesManagement() {
                                 min={0}
                                 step={0.01}
                                 required
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                className="mt-1 block w-full rounded-md border-blue-700/50 bg-blue-950/50 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm text-blue-100"
                               />
                             </div>
                             <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                               <button
                                 type="submit"
-                                className="inline-flex w-full justify-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
+                                className="inline-flex w-full justify-center rounded-md border border-blue-600/50 bg-blue-700/80 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-600/80 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
                               >
                                 Add Service
                               </button>
                               <button
                                 type="button"
                                 onClick={() => setIsAddModalOpen(false)}
-                                className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
+                                className="mt-3 inline-flex w-full justify-center rounded-md border border-blue-700 bg-blue-800/40 px-4 py-2 text-base font-medium text-blue-100 shadow-sm hover:bg-blue-800/60 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
                               >
                                 Cancel
                               </button>
@@ -441,17 +441,17 @@ export default function ServicesManagement() {
           {isEditModalOpen && currentService && (
             <div className="fixed inset-0 z-10 overflow-y-auto">
               <div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={() => setIsEditModalOpen(false)}></div>
+                <div className="fixed inset-0 bg-blue-950/80 backdrop-blur-sm transition-opacity" onClick={() => setIsEditModalOpen(false)}></div>
                 <span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
-                <div className="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
-                  <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div className="inline-block transform overflow-hidden rounded-lg bg-blue-900/90 border border-blue-700/50 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle backdrop-blur-sm">
+                  <div className="bg-blue-900/90 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div className="sm:flex sm:items-start">
                       <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                        <h3 className="text-lg font-medium leading-6 text-gray-900">Edit Service</h3>
+                        <h3 className="text-lg font-medium leading-6 text-blue-100">Edit Service</h3>
                         <div className="mt-2">
                           <form onSubmit={handleEditService}>
                             <div className="mb-4">
-                              <label htmlFor="edit-name" className="block text-sm font-medium text-gray-700">Service Name</label>
+                              <label htmlFor="edit-name" className="block text-sm font-medium text-blue-200">Service Name</label>
                               <input
                                 type="text"
                                 name="name"
@@ -459,22 +459,22 @@ export default function ServicesManagement() {
                                 value={formData.name}
                                 onChange={handleInputChange}
                                 required
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                className="mt-1 block w-full rounded-md border-blue-700/50 bg-blue-950/50 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm text-blue-100 placeholder-blue-300/50"
                               />
                             </div>
                             <div className="mb-4">
-                              <label htmlFor="edit-description" className="block text-sm font-medium text-gray-700">Description</label>
+                              <label htmlFor="edit-description" className="block text-sm font-medium text-blue-200">Description</label>
                               <textarea
                                 name="description"
                                 id="edit-description"
                                 value={formData.description}
                                 onChange={handleInputChange}
                                 rows={3}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                className="mt-1 block w-full rounded-md border-blue-700/50 bg-blue-950/50 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm text-blue-100 placeholder-blue-300/50"
                               />
                             </div>
                             <div className="mb-4">
-                              <label htmlFor="edit-duration" className="block text-sm font-medium text-gray-700">Duration (minutes)</label>
+                              <label htmlFor="edit-duration" className="block text-sm font-medium text-blue-200">Duration (minutes)</label>
                               <input
                                 type="number"
                                 name="duration"
@@ -484,11 +484,11 @@ export default function ServicesManagement() {
                                 min={5}
                                 step={5}
                                 required
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                className="mt-1 block w-full rounded-md border-blue-700/50 bg-blue-950/50 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm text-blue-100"
                               />
                             </div>
                             <div className="mb-4">
-                              <label htmlFor="edit-price" className="block text-sm font-medium text-gray-700">Price ($)</label>
+                              <label htmlFor="edit-price" className="block text-sm font-medium text-blue-200">Price ($)</label>
                               <input
                                 type="number"
                                 name="price"
@@ -498,20 +498,20 @@ export default function ServicesManagement() {
                                 min={0}
                                 step={0.01}
                                 required
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                className="mt-1 block w-full rounded-md border-blue-700/50 bg-blue-950/50 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm text-blue-100"
                               />
                             </div>
                             <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                               <button
                                 type="submit"
-                                className="inline-flex w-full justify-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
+                                className="inline-flex w-full justify-center rounded-md border border-blue-600/50 bg-blue-700/80 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-600/80 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
                               >
                                 Update Service
                               </button>
                               <button
                                 type="button"
                                 onClick={() => setIsEditModalOpen(false)}
-                                className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
+                                className="mt-3 inline-flex w-full justify-center rounded-md border border-blue-700 bg-blue-800/40 px-4 py-2 text-base font-medium text-blue-100 shadow-sm hover:bg-blue-800/60 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
                               >
                                 Cancel
                               </button>
@@ -530,38 +530,38 @@ export default function ServicesManagement() {
           {isDeleteModalOpen && currentService && (
             <div className="fixed inset-0 z-10 overflow-y-auto">
               <div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={() => setIsDeleteModalOpen(false)}></div>
+                <div className="fixed inset-0 bg-blue-950/80 backdrop-blur-sm transition-opacity" onClick={() => setIsDeleteModalOpen(false)}></div>
                 <span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
-                <div className="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
-                  <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div className="inline-block transform overflow-hidden rounded-lg bg-blue-900/90 border border-blue-700/50 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle backdrop-blur-sm">
+                  <div className="bg-blue-900/90 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div className="sm:flex sm:items-start">
-                      <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                        <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-900/30 border border-red-700/50 sm:mx-0 sm:h-10 sm:w-10">
+                        <svg className="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                         </svg>
                       </div>
                       <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                        <h3 className="text-lg font-medium leading-6 text-gray-900">Delete Service</h3>
+                        <h3 className="text-lg font-medium leading-6 text-blue-100">Delete Service</h3>
                         <div className="mt-2">
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm text-blue-200">
                             Are you sure you want to delete the service "{currentService.name}"? This action cannot be undone.
                           </p>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                  <div className="bg-blue-950/50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                     <button
                       type="button"
                       onClick={handleDeleteService}
-                      className="inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
+                      className="inline-flex w-full justify-center rounded-md border border-red-500 bg-red-600/80 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-500/80 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
                     >
                       Delete
                     </button>
                     <button
                       type="button"
                       onClick={() => setIsDeleteModalOpen(false)}
-                      className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
+                      className="mt-3 inline-flex w-full justify-center rounded-md border border-blue-700 bg-blue-800/40 px-4 py-2 text-base font-medium text-blue-100 shadow-sm hover:bg-blue-800/60 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
                     >
                       Cancel
                     </button>

@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 export function Navigation() {
   const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
   
@@ -30,7 +31,11 @@ export function Navigation() {
   };
 
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-blue-900/90 backdrop-blur-sm shadow-md' : 'bg-transparent'}`}>
+    <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-blue-900/95 backdrop-blur-sm shadow-lg' : 'bg-blue-950/80 backdrop-blur-sm'}`}>
+      <div className="fixed inset-0 pointer-events-none z-[-1]">
+        {/* Mobile-friendly background blur overlay */}
+        <div className={`absolute inset-0 bg-blue-950/80 backdrop-blur-md transition-opacity duration-500 ${isMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}></div>
+      </div>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
           {/* Logo - left aligned */}
@@ -42,7 +47,8 @@ export function Navigation() {
                   alt="TrimSlots Logo" 
                   width={512} 
                   height={240} 
-                  className="object-contain translate-y-[2px]" 
+                  className="object-contain" 
+                  style={{ maxHeight: '40px' }}
                   priority
                 />
               </div>
@@ -81,15 +87,83 @@ export function Navigation() {
           <div className="flex items-center">
             {session ? (
               <div className="flex items-center space-x-3">
-                <span className="text-sm font-medium text-white bg-blue-800 px-3 py-1.5 rounded-md border border-blue-700">
-                  {session?.user?.name || session?.user?.email}
-                </span>
-                <button
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                  className="rounded-md bg-blue-800 px-4 py-1.5 text-sm font-medium text-white shadow-sm border border-blue-700 hover:bg-blue-700 hover:text-white transition-all duration-300"
-                >
-                  Sign Out
-                </button>
+                <div className="relative">
+                  <button 
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="text-sm font-medium text-white bg-blue-800 px-3 py-1.5 rounded-md border border-blue-700 hover:bg-blue-700 transition-all duration-300 flex items-center"
+                  >
+                    {session?.user?.name || session?.user?.email}
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      className={`h-4 w-4 ml-1 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div 
+                    className={`absolute right-0 mt-2 w-48 bg-gray-900 rounded-md shadow-lg border border-gray-800 overflow-hidden z-50 transition-all duration-200 origin-top-right ${isDropdownOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}
+                  >
+                    <div className="py-1">
+                      <Link 
+                        href="/account/profile" 
+                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-blue-700 hover:text-white transition-all duration-200"
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
+                        <div className="flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                          My Profile
+                        </div>
+                      </Link>
+                      {session?.user?.role === "BUSINESS_OWNER" || session?.user?.role === "ADMIN" ? (
+                        <Link 
+                          href="/barber" 
+                          className="block px-4 py-2 text-sm text-gray-300 hover:bg-blue-700 hover:text-white transition-all duration-200"
+                          onClick={() => setIsDropdownOpen(false)}
+                        >
+                          <div className="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                            My Barber Profile
+                          </div>
+                        </Link>
+                      ) : null}
+                      <Link 
+                        href="/account/password" 
+                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-blue-700 hover:text-white transition-all duration-200"
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
+                        <div className="flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                          </svg>
+                          Change Password
+                        </div>
+                      </Link>
+                      <div className="border-t border-gray-800 mt-1 pt-1">
+                        <button 
+                          onClick={() => {
+                            setIsDropdownOpen(false);
+                            signOut({ callbackUrl: "/" });
+                          }} 
+                          className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-red-700 hover:text-white transition-all duration-200"
+                        >
+                          <div className="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                            Sign Out
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             ) : (
               <div className="flex items-center space-x-3">
@@ -119,6 +193,7 @@ export function Navigation() {
                   width={512} 
                   height={240} 
                   className="object-contain" 
+                  style={{ maxHeight: '32px' }}
                   priority
                 />
               </div>
@@ -188,10 +263,41 @@ export function Navigation() {
             
             <div className="border-t border-blue-700 p-4">
               {session ? (
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <p className="text-sm font-medium text-white bg-blue-800 px-3 py-1.5 rounded-md inline-block">
                     {session?.user?.name || session?.user?.email}
                   </p>
+                  <div className="flex flex-col space-y-1">
+                    <Link href="/account/profile" 
+                      className="rounded-md bg-gray-800 px-3 py-1.5 text-left text-sm text-gray-300 flex items-center hover:bg-gray-700 transition-all duration-200"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      My Profile
+                    </Link>
+                    {session?.user?.role === "BUSINESS_OWNER" || session?.user?.role === "ADMIN" ? (
+                      <Link href="/barber" 
+                        className="rounded-md bg-gray-800 px-3 py-1.5 text-left text-sm text-gray-300 flex items-center hover:bg-gray-700 transition-all duration-200"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                        My Barber Profile
+                      </Link>
+                    ) : null}
+                    <Link href="/account/password" 
+                      className="rounded-md bg-gray-800 px-3 py-1.5 text-left text-sm text-gray-300 flex items-center hover:bg-gray-700 transition-all duration-200"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                      Change Password
+                    </Link>
+                  </div>
                   <button
                     onClick={() => {
                       signOut({ callbackUrl: "/" });

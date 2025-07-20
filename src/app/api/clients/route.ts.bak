@@ -139,7 +139,7 @@ export async function POST(req: NextRequest) {
         where: {
           businessId_clientId: {
             clientId: existingUser.id,
-            businessId: businessId!, // Fixed: Non-null assertion since we've already checked this is valid
+            businessId: businessId as string, // Type assertion since we've already checked this is valid
           },
         },
       });
@@ -172,7 +172,7 @@ export async function POST(req: NextRequest) {
           hashedPassword: "", // In a real app, would generate a temporary password and send an email
           clientBusinesses: {
             create: {
-              businessId: businessId!, // Fixed: Non-null assertion since we've already checked this is valid
+              businessId: businessId as string, // Type assertion since we've already checked this is valid
             },
           },
         },

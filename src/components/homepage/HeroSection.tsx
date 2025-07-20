@@ -142,19 +142,19 @@ export default function HeroSection() {
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
       <div className="absolute top-1/2 left-1/3 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
       
-      <div className="relative z-10 px-4 sm:px-6 lg:px-8 py-24 md:py-32">
+      <div className="relative z-10 px-4 sm:px-6 lg:px-8 pt-28 pb-12 sm:py-24 md:py-32">
         <div className={`mx-auto max-w-7xl transition-all duration-1000 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
             {/* Left Column - Text Content */}
-            <div className="text-center lg:text-left">
+            <div className="text-center lg:text-left mb-8 lg:mb-0">
               <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-600 bg-opacity-30 text-blue-200 mb-6">
                 #1 Barber Booking Platform
               </div>
-              <h1 className="text-4xl md:text-5xl xl:text-6xl font-bold tracking-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-bold tracking-tight">
                 <span className="block mb-2">Modern Haircuts,</span>
                 <span className="block bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Modern Booking.</span>
               </h1>
-              <p className="mt-6 text-lg md:text-xl text-gray-300 max-w-2xl">
+              <p className="mt-4 sm:mt-6 text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl mx-auto lg:mx-0">
                 TrimSlots streamlines your barbershop experience with easy online booking, real-time availability, and personalized service recommendations.
               </p>
               
@@ -181,7 +181,7 @@ export default function HeroSection() {
             </div>
             
             {/* Right Column - App Preview */}
-            <div className="relative hidden lg:block">
+            <div className="relative block">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl opacity-10 blur-2xl"></div>
               <div className="relative bg-gray-900 rounded-3xl shadow-2xl border border-gray-800 overflow-hidden">
                 {/* App Header */}
@@ -440,14 +440,14 @@ export default function HeroSection() {
                                 <div className="border-t border-gray-700 pt-4">
                                   <h5 className="text-sm font-medium text-gray-400 mb-2">Account Settings</h5>
                                   <div className="space-y-2">
-                                    <Link href="#" className="text-sm text-gray-400 hover:text-white flex items-center">
+                                    <Link href="/account/profile" className="text-sm text-gray-400 hover:text-white flex items-center bg-gray-700/50 hover:bg-gray-700 rounded-lg p-2 transition-all">
                                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                       </svg>
                                       Edit Profile
                                     </Link>
-                                    <Link href="#" className="text-sm text-gray-400 hover:text-white flex items-center">
+                                    <Link href="/account/password" className="text-sm text-gray-400 hover:text-white flex items-center bg-gray-700/50 hover:bg-gray-700 rounded-lg p-2 transition-all">
                                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                       </svg>

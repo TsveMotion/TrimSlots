@@ -20,16 +20,33 @@ export async function GET(request: NextRequest) {
     // Get business ID from the session user
     const userId = session.user.id;
     
-    // Find business for this user first
-    const business = await prisma.business.findUnique({
+    // Find business for this user first (check both owned and managed businesses)
+    let business = await prisma.business.findUnique({
       where: {
         ownerId: userId,
       },
     });
     
+    // If not found as owner, check if user has a managed business
     if (!business) {
+      console.log('API: /api/business/settings - Business not found for owner, checking managed business');
+      const userWithManagedBusiness = await prisma.user.findUnique({
+        where: { id: userId },
+        include: { managedBusiness: true },
+      });
+      
+      if (userWithManagedBusiness?.managedBusiness) {
+        console.log('API: /api/business/settings - Found managed business');
+        business = userWithManagedBusiness.managedBusiness;
+      }
+    }
+    
+    if (!business) {
+      console.log('API: /api/business/settings - No business found for user');
       return NextResponse.json({ message: 'Business not found' }, { status: 404 });
     }
+    
+    console.log('API: /api/business/settings - Found business:', business.id);
     
     // Find business settings using businessId
     const businessSettings = await prisma.businessSettings.findFirst({
@@ -85,25 +102,83 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Find business for this user first
-    const business = await prisma.business.findUnique({
+    // Find business for this user first (check both owned and managed businesses)
+    let business = await prisma.business.findUnique({
       where: {
         ownerId: userId,
       },
     });
     
+    // If not found as owner, check if user has a managed business
     if (!business) {
+      console.log('API: /api/business/settings POST - Business not found for owner, checking managed business');
+      const userWithManagedBusiness = await prisma.user.findUnique({
+        where: { id: userId },
+        include: { managedBusiness: true },
+      });
+      
+      if (userWithManagedBusiness?.managedBusiness) {
+        console.log('API: /api/business/settings POST - Found managed business');
+        business = userWithManagedBusiness.managedBusiness;
+      }
+    }
+    
+    if (!business) {
+      console.log('API: /api/business/settings POST - No business found for user');
       return NextResponse.json({ message: 'Business not found' }, { status: 404 });
     }
     
-    // Create new business settings
-    const businessSettings = await prisma.businessSettings.create({
+    console.log('API: /api/business/settings POST - Found business:', business.id);
+    
+    // First, update the business record with basic information
+    await prisma.business.update({
+      where: {
+        id: business.id,
+      },
       data: {
-        businessId: business.id,
-        stripeConnectId: data.stripeConnectId || null,
-        payoutsEnabled: data.payoutsEnabled || false,
+        name: data.name,
+        address: data.address || null,
+        phone: data.phone || null,
+        email: data.email || null,
+        description: data.description || null,
       },
     });
+
+    // Now create or update business settings using upsert
+    const businessSettings = await prisma.businessSettings.upsert({
+      where: {
+        businessId: business.id,
+      },
+      create: {
+        businessId: business.id,
+        // Stripe integration
+        stripeConnectId: data.stripeConnectId || null,
+        payoutsEnabled: data.payoutsEnabled || false,
+        // Profile customization fields
+        profileBgColor: data.profileBgColor || null,
+        profileTextColor: data.profileTextColor || null,
+        profileAccentColor: data.profileAccentColor || null,
+        profileHeaderBgImage: data.profileHeaderBgImage || null,
+        profileBgImage: data.profileBgImage || null,
+        profileCustomCss: data.profileCustomCss || null,
+        profileFontFamily: data.profileFontFamily || null,
+      },
+      update: {
+        // Stripe integration
+        stripeConnectId: data.stripeConnectId || null,
+        payoutsEnabled: data.payoutsEnabled || false,
+        // Profile customization fields
+        profileBgColor: data.profileBgColor || null,
+        profileTextColor: data.profileTextColor || null,
+        profileAccentColor: data.profileAccentColor || null,
+        profileHeaderBgImage: data.profileHeaderBgImage || null,
+        profileBgImage: data.profileBgImage || null,
+        profileCustomCss: data.profileCustomCss || null,
+        profileFontFamily: data.profileFontFamily || null,
+      },
+    });
+    
+    console.log('Business settings saved successfully:', businessSettings.id);
     
     return NextResponse.json(businessSettings, { status: 201 });
   } catch (error) {
@@ -139,16 +214,33 @@ export async function PUT(request: NextRequest) {
       );
     }
     
-    // Find business for this user first
-    const business = await prisma.business.findUnique({
+    // Find business for this user first (check both owned and managed businesses)
+    let business = await prisma.business.findUnique({
       where: {
         ownerId: userId,
       },
     });
     
+    // If not found as owner, check if user has a managed business
     if (!business) {
+      console.log('API: /api/business/settings PUT - Business not found for owner, checking managed business');
+      const userWithManagedBusiness = await prisma.user.findUnique({
+        where: { id: userId },
+        include: { managedBusiness: true },
+      });
+      
+      if (userWithManagedBusiness?.managedBusiness) {
+        console.log('API: /api/business/settings PUT - Found managed business');
+        business = userWithManagedBusiness.managedBusiness;
+      }
+    }
+    
+    if (!business) {
+      console.log('API: /api/business/settings PUT - No business found for user');
       return NextResponse.json({ message: 'Business not found' }, { status: 404 });
     }
+    
+    console.log('API: /api/business/settings PUT - Found business:', business.id);
     
     // Find existing business settings
     const existingSettings = await prisma.businessSettings.findFirst({
@@ -164,6 +256,17 @@ export async function PUT(request: NextRequest) {
           businessId: business.id,
           stripeConnectId: data.stripeConnectId || null,
           payoutsEnabled: data.payoutsEnabled || false,
+          // Profile customization fields - using type assertion to bypass TypeScript errors
+          // until Prisma client can be regenerated
+          ...({
+            profileBgColor: data.profileBgColor || null,
+            profileTextColor: data.profileTextColor || null,
+            profileAccentColor: data.profileAccentColor || null,
+            profileHeaderBgImage: data.profileHeaderBgImage || null,
+            profileBgImage: data.profileBgImage || null,
+            profileCustomCss: data.profileCustomCss || null,
+            profileFontFamily: data.profileFontFamily || null,
+          } as any),
         },
       });
       
@@ -178,6 +281,17 @@ export async function PUT(request: NextRequest) {
       data: {
         stripeConnectId: data.stripeConnectId || existingSettings.stripeConnectId,
         payoutsEnabled: data.payoutsEnabled !== undefined ? data.payoutsEnabled : existingSettings.payoutsEnabled,
+        // Profile customization fields - only including fields that exist in the database
+        // Removed profileTheme as it doesn't exist in the database yet
+        ...({
+          profileBgColor: data.profileBgColor !== undefined ? data.profileBgColor : (existingSettings as any).profileBgColor,
+          profileTextColor: data.profileTextColor !== undefined ? data.profileTextColor : (existingSettings as any).profileTextColor,
+          profileAccentColor: data.profileAccentColor !== undefined ? data.profileAccentColor : (existingSettings as any).profileAccentColor,
+          profileHeaderBgImage: data.profileHeaderBgImage !== undefined ? data.profileHeaderBgImage : (existingSettings as any).profileHeaderBgImage,
+          profileBgImage: data.profileBgImage !== undefined ? data.profileBgImage : (existingSettings as any).profileBgImage,
+          profileCustomCss: data.profileCustomCss !== undefined ? data.profileCustomCss : (existingSettings as any).profileCustomCss,
+          profileFontFamily: data.profileFontFamily !== undefined ? data.profileFontFamily : (existingSettings as any).profileFontFamily,
+        } as any),
       },
     });
     

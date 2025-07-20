@@ -161,12 +161,21 @@ model BankAccount {
 
 // BusinessSettings model
 model BusinessSettings {
-  id              String   @id @default(uuid())
-  businessId      String   @unique
-  stripeConnectId String?
-  payoutsEnabled  Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id                   String   @id @default(uuid())
+  businessId           String   @unique
+  stripeConnectId      String?
+  payoutsEnabled       Boolean  @default(false)
+  // Barber profile page customization
+  // Note: profileTheme field was removed because it doesn't exist in the database yet
+  profileBgColor       String?  // Background color (hex or CSS color name)
+  profileTextColor     String?  // Text color (hex or CSS color name)
+  profileAccentColor   String?  // Accent color for buttons and highlights
+  profileHeaderBgImage String?  // URL to header background image
+  profileBgImage       String?  // URL to page background image
+  profileCustomCss     String?  @db.Text // Custom CSS for advanced users
+  profileFontFamily    String?  // Font family for the profile page
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
   business Business @relation(fields: [businessId], references: [id])
 }

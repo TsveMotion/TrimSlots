@@ -52,6 +52,27 @@ export async function GET() {
       
       if (userWithManagedBusiness?.managedBusiness) {
         console.log('API: /api/business - Found managedBusiness instead');
+        
+        // Check if the business name contains an email address or needs to be updated
+        const managedBusiness = userWithManagedBusiness.managedBusiness;
+        const currentName = managedBusiness.name || '';
+        
+        // Check if the name contains an email pattern or is set to email's business
+        const emailPattern = /@[^\s]+\.[^\s]+/;
+        const needsNameUpdate = emailPattern.test(currentName) || 
+                               currentName.includes("'s Business") && 
+                               user.email && currentName.includes(user.email);
+        
+        if (needsNameUpdate) {
+          console.log('API: /api/business - Updating managedBusiness name');
+          // Update the business name
+          const updatedBusiness = await prisma.business.update({
+            where: { id: managedBusiness.id },
+            data: { name: "My Business" }
+          });
+          return NextResponse.json(updatedBusiness);
+        }
+        
         return NextResponse.json(userWithManagedBusiness.managedBusiness);
       }
       
@@ -59,9 +80,12 @@ export async function GET() {
       
       // Create a new business for the user
       try {
+        // Use a better default name - if user.name exists use it, otherwise use "My Business"
+        const businessName = user.name ? `${user.name}'s Business` : "My Business";
+        
         const newBusiness = await prisma.business.create({
           data: {
-            name: `${user.name}'s Business`,
+            name: businessName,
             owner: {
               connect: { id: user.id }
             }
